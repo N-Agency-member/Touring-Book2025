@@ -1,0 +1,48 @@
+.env
+
+# prisma migrates
+/prisma/migrations
+# uploaded
+/public/upload/avatars/*
+/public/upload/destinations/*
+/public/upload/landmarks/*
+/public/upload/temp/*
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+/tests/cypress_exaples
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env.development.local
+.env.test.local
+.env.production.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+
+#vsc
+.vscode
+.env
+.env

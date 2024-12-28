@@ -1,0 +1,182 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  surname       String
+  email         String    @unique
+  emailVerified DateTime?
+  birth         DateTime
+  avatar        String?
+  country       String
+  countryCode   String
+  gender        Gender    @default(MALE)
+  password      String
+  createdAt     DateTime  @default(now())
+  isAdmin       Boolean   @default(false)
+
+  sessions Session[]
+
+  landmarksReviews     LandmarkReview[]
+  landmarksReviewLikes LandmarkReviewLike[]
+
+  createdDestinations    Destination[]
+  createdLandmarks       Landmark[]
+  destinationReview      DestinationReview[]
+  destinationReviewLikes DestinationReviewLike[]
+
+
+}
+
+model Session {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  accessToken String   @unique
+  expires     DateTime
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("sessions")
+}
+
+model Destination {
+  id                String        @id @default(cuid())
+  creatorId         String?       @map("creator_id")
+  slug              String        @unique
+  city              String
+  country           String
+  countryCode       String
+  population        Int
+  continent         Continent
+  shortDescription  String
+  description       Json
+  folder            String
+  status            ContentStatus @default(WAITING_FOR_APPROVAL)
+  createdAt         DateTime      @default(now())
+  // For seaching purpose
+  country_lowercase String
+  city_lowercase    String
+
+  landmarks Landmark[]
+  reviews   DestinationReview[]
+  creator   User?               @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+}
+
+model Landmark {
+  id               String        @id @default(cuid())
+  destinationId    String        @map("destination_id")
+  creatorId        String?       @map("creator_id")
+  slug             String        @unique
+  title            String
+  description      Json
+  shortDescription String
+  folder           String
+  type             LandmarkType
+  status           ContentStatus @default(WAITING_FOR_APPROVAL)
+  createdAt        DateTime      @default(now())
+  // For seaching purpose
+  title_lowercase  String
+
+  reviews     LandmarkReview[]
+  creator     User?            @relation(fields: [creatorId], references: [id], onDelete: SetNull)
+  destination Destination      @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+}
+
+model DestinationReview {
+  id            String     @id @default(cuid())
+  reviewerId    String     @map("creator_id")
+  destinationId String     @map("destination_id")
+  review        String
+  tags          Json
+  points        Float
+  createdAt     DateTime   @default(now())
+  type          ReviewType
+
+  destination Destination             @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+  reviewer    User                    @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
+  likes       DestinationReviewLike[]
+}
+
+model DestinationReviewLike {
+  id       String   @id @default(cuid())
+  userId   String   @map("user_id")
+  reviewId String   @map("review_id")
+  feedback Feedback
+
+  review DestinationReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user   User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model LandmarkReview {
+  id         String     @id @default(cuid())
+  reviewerId String     @map("creator_id")
+  landmarkId String     @map("landmark_id")
+  review     String
+  tags       Json
+  points     Float
+  type       ReviewType
+  createdAt  DateTime   @default(now())
+
+  landmark Landmark             @relation(fields: [landmarkId], references: [id], onDelete: Cascade)
+  reviewer User                 @relation(fields: [reviewerId], references: [id], onDelete: Cascade)
+  likes    LandmarkReviewLike[]
+}
+
+model LandmarkReviewLike {
+  id       String   @id @default(cuid())
+  userId   String   @map("user_id")
+  reviewId String   @map("review_id")
+  feedback Feedback
+
+  review LandmarkReview @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum ContentStatus {
+  APPROVED
+  WAITING_FOR_APPROVAL
+  DISAPPROVED
+}
+
+enum Feedback {
+  LIKE
+  DISLIKE
+}
+
+enum ReviewType {
+  POSITIVE
+  MIXED
+  NEGATIVE
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum Continent {
+  Asia
+  Europe
+  Africa
+  North_America
+  South_America
+  Australia_Oceania
+  Antarctica
+}
+
+enum LandmarkType {
+  RESTAURANT
+  MONUMENT
+  ANTIQUE
+  BUILDING
+  ART
+  NATURE
+  MUSEUM
+}
