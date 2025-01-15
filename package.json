@@ -54,7 +54,7 @@
         "redux": "^4.1.2",
         "request": "^2.88.2",
         "sass": "^1.43.5",
-        "sharp": "^0.29.3",
+        "sharp": "^0.33.5",
         "slick-carousel": "^1.8.1",
         "sqlite3": "^5.1.7",
         "superagent": "^6.1.0",
