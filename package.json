@@ -53,7 +53,7 @@
         "react-visibility-sensor": "^5.1.1",
         "redux": "^4.1.2",
         "request": "^2.88.2",
-        "sass": "^1.43.5",
+        "sass": "^1.83.0",
         "sharp": "^0.29.3",
         "slick-carousel": "^1.8.1",
         "sqlite3": "^5.1.7",
